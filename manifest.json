@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Notiondipity",
+  "version": "0.1.0",
+  "background": {
+    "scripts": [
+      "build/Worker.js"
+    ]
+  },
+  "permissions": [
+    "tabs",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "*://www.notion.so/*",
+    "*://api.notion.com/*"
+  ],
+  "action": {
+    "default_title": "Notiondipity",
+    "default_popup": "Popup.html"
+  }
+}

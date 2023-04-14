@@ -1,0 +1,21 @@
+{
+  "name": "notiondipity_extension",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@notionhq/client": "^2.2.3",
+    "typescript": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^111.0.0",
+    "typescript-bundle": "^1.0.18"
+  }
+}
