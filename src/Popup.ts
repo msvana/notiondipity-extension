@@ -1,3 +1,18 @@
+import App from '@/App.vue'
+import {createApp} from 'vue'
+import {createRouter, RouteRecord} from 'vue-router'
+
+const routes: RouteRecord[] = [
+    {path: '/', component: Home, name: 'home'}
+]
+
+const router = createRouter({routes})
+
+const app = createApp(App)
+app.use(router)
+app.mount('#app')
+
+/*
 type PageDetails = {
     id: string,
     title: string,
@@ -12,7 +27,7 @@ type RecommendationResponse = {
 }
 
 async function getRecommendations(pageId): Promise<RecommendationResponse> {
-    const url = `http://127.0.0.1:5000/recommend/${pageId}`
+    const url = `https://notiondipity-backend.fly.dev/recommend/${pageId}`
     const response = await fetch(url, {
         method: 'GET',
         mode: 'cors'
@@ -40,4 +55,4 @@ const message = browser.runtime.sendMessage({type: 'get-page-id'})
 message.then((response) => {
     loadRecommendations(response.pageId)
 })
-
+*/

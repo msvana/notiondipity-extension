@@ -4,12 +4,11 @@
       "es2015",
       "dom"
     ],
-    "outDir": "build",
+    "outDir": "dist",
     "target": "es2015",
     "moduleResolution": "Node"
   },
   "files": [
-    "src/Worker.ts",
-    "src/Popup.ts"
+    "src/Worker.ts"
   ],
 }

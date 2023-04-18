@@ -4,19 +4,24 @@
   "version": "0.1.0",
   "background": {
     "scripts": [
-      "build/Worker.js"
+      "dist/Worker.js"
     ]
   },
   "permissions": [
     "tabs",
-    "webRequest"
+    "webRequest",
+    "identity"
   ],
   "host_permissions": [
-    "*://www.notion.so/*",
-    "*://api.notion.com/*"
+    "*://www.notion.so/*"
   ],
   "action": {
     "default_title": "Notiondipity",
-    "default_popup": "Popup.html"
+    "default_popup": "dist/index.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "notiondipity@svana.name"
+    }
   }
 }
