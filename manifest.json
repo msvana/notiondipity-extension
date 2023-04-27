@@ -9,11 +9,7 @@
   },
   "permissions": [
     "tabs",
-    "webRequest",
     "identity"
-  ],
-  "host_permissions": [
-    "*://www.notion.so/*"
   ],
   "action": {
     "default_title": "Notiondipity",

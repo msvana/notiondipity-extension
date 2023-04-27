@@ -1,4 +1,3 @@
-let currentPageId = null
 
 const redirectURL = browser.identity.getRedirectURL();
 const clientId = '3eeccaf2-dd44-4eee-bfe0-983e8e09cc32'
@@ -21,14 +20,25 @@ browser.identity.launchWebAuthFlow({url: authUrl, interactive: true}).then(async
 })
  */
 
-browser.webRequest.onBeforeRequest.addListener((details) => {
-    const requestBodyText = new TextDecoder().decode(details.requestBody.raw[0].bytes)
-    const requestBody = JSON.parse(requestBodyText)
-    currentPageId = requestBody.block.id
-}, {urls: ['https://www.notion.so/api/v3/recordPageVisit']}, ['requestBody'])
+async function getCurrentPageId(): Promise<string | null> {
+	const currentTab = await browser.tabs.query({active: true, currentWindow: true})
+	const currentUrl = currentTab[0].url
 
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	if (!currentUrl.startsWith('https://www.notion.so/'))
+		return null
+
+	const potentialId = currentUrl.split('-').pop()
+	
+	if (potentialId.length !== 32)
+		return null
+
+	return potentialId
+}
+
+browser.runtime.onMessage.addListener(function (message, _, sendResponse) {
     if (message.type === 'get-page-id') {
-        sendResponse({'pageId': currentPageId})
-    }
+		getCurrentPageId().then((pageId) => sendResponse({'pageId': pageId}))
+	}
+
+	return true
 })

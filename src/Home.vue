@@ -16,13 +16,18 @@ const recommendedPagesList = ref<Recommendation[]>([])
 
 onMounted(async function () {
     browser.runtime.sendMessage({type: 'get-page-id'}).then((response: CurrentPageReponse) => {
+		console.log(response)
         loadRecommendations(response.pageId)
     })
 })
 
 
-async function loadRecommendations(pageId: string) {
-    const recommendationResponse = await getRecommendations(pageId)
+async function loadRecommendations(pageId: string | null) {
+	if(pageId === null) {
+		return
+	}
+
+	const recommendationResponse = await getRecommendations(pageId)
     currentPageName.value = recommendationResponse.currentPage.title
     recommendedPagesList.value = recommendationResponse.recommendations
 }
