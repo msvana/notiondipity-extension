@@ -16,7 +16,6 @@ const recommendedPagesList = ref<Recommendation[]>([])
 
 onMounted(async function () {
     browser.runtime.sendMessage({type: 'get-page-id'}).then((response: CurrentPageReponse) => {
-		console.log(response)
         loadRecommendations(response.pageId)
     })
 })

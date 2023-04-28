@@ -9,7 +9,8 @@
   },
   "permissions": [
     "tabs",
-    "identity"
+    "identity",
+    "storage"
   ],
   "action": {
     "default_title": "Notiondipity",
