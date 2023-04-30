@@ -24,10 +24,23 @@ async function getAccessToken(): Promise<string | null> {
 	const accessTokenStorage: Object = await browser.storage.local.get('accessToken')
 	if ('accessToken' in accessTokenStorage) {
 		const accessToken: string = accessTokenStorage.accessToken as string
-		return accessToken
+		if (await verifyAccessToken(accessToken))
+			return accessToken
 	}
 
 	return null
+}
+
+async function verifyAccessToken(accessToken: string): Promise<boolean> {
+	const response = await fetch(`${BACKEND_URL}/verify-token`, {
+		method: 'POST',
+		mode: 'cors',
+		body: JSON.stringify({accessToken}),
+		headers: {'Content-Type': 'application/json'}
+	})
+
+	const responsePayload = await response.json()
+	return !!responsePayload.valid
 }
 
 async function login(): Promise<string | null> {

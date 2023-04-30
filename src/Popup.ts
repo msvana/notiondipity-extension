@@ -1,9 +1,9 @@
 import App from '@/App.vue'
 import Home from '@/Home.vue'
 import {createApp} from 'vue'
-import {createRouter, RouteRecord, createWebHashHistory} from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 
-const routes: RouteRecord[] = [
+const routes = [
     {path: '/', component: Home, name: 'home'}
 ]
 
