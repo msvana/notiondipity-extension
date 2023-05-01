@@ -1,12 +1,17 @@
 <template>
-    <h1>
-        <small>Pages similar to</small><br /><span>{{ currentPageName }}</span>
-    </h1>
-    <ul>
-        <li v-for="recommendation in recommendedPagesList">
-            <a :href="recommendation[0]">{{ recommendation[0] }}</a>
-        </li>
-    </ul>
+    <div v-if="loading">
+        Loading similar pages ...
+    </div>
+    <div v-else>
+        <h1>
+            <small>Pages similar to</small><br /><span>{{ currentPageName }}</span>
+        </h1>
+        <ul>
+            <li v-for="recommendation in recommendedPagesList">
+                <a :href="recommendation[0]">{{ recommendation[0] }}</a>
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -15,6 +20,7 @@ import type { CurrentPageReponse, Recommendation, RecommendationResponse } from 
 
 const currentPageName = ref<string>("");
 const recommendedPagesList = ref<Recommendation[]>([]);
+const loading = ref<boolean>(true)
 
 onMounted(async function () {
     browser.runtime.sendMessage({ type: "get-page-id" }).then((response: CurrentPageReponse) => {
@@ -31,6 +37,7 @@ async function loadRecommendations(pageId: string | null) {
     const recommendationResponse = await getRecommendations(pageId);
     currentPageName.value = recommendationResponse.currentPage.title;
     recommendedPagesList.value = recommendationResponse.recommendations;
+    loading.value = false
 }
 
 async function getRecommendations(pageId: string): Promise<RecommendationResponse> {
