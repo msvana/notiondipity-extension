@@ -18,11 +18,13 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import type { CurrentPageReponse, Recommendation, RecommendationResponse } from "./Models";
+import { useRouter } from "vue-router";
 
 const currentPageName = ref<string>("");
 const recommendedPagesList = ref<Recommendation[]>([]);
 const loading = ref<boolean>(true);
 const error = ref<boolean>(false);
+const router = useRouter();
 
 onMounted(async function () {
     browser.runtime.sendMessage({ type: "get-page-id" }).then((response: CurrentPageReponse) => {
@@ -42,7 +44,7 @@ async function loadRecommendations(pageId: string | null) {
     loading.value = false;
 }
 
-async function getRecommendations(pageId: string): Promise<RecommendationResponse> {
+async function getRecommendations(pageId: string): Promise<RecommendationResponse | null> {
     const url = `http://localhost:5001/recommend/${pageId}`;
     const accessTokenResponse = await browser.runtime.sendMessage({ type: "get-access-token" });
     const accessToken = accessTokenResponse["accessToken"];
@@ -52,6 +54,12 @@ async function getRecommendations(pageId: string): Promise<RecommendationRespons
         mode: "cors",
         headers: { Authorization: `Bearer ${accessToken}` },
     });
+
+    const statusCode = response.status;
+
+    if (statusCode == 401) {
+        router.push("login");
+    }
 
     const result = await response.json();
     return result;
