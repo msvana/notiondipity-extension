@@ -6,13 +6,17 @@
             <h1>
                 <small>Pages similar to</small><br /><span>{{ currentPageName }}</span>
             </h1>
-            <ul>
-                <li v-for="recommendation in recommendedPagesList">
-                    <a :href="recommendation[0]">{{ recommendation[1] }}</a
-                    ><br />
-                    {{ recommendation[2].toFixed(3) }}
-                </li>
-            </ul>
+
+            <div class="card mb-2" v-for="recommendation in recommendedPagesList">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a :href="recommendation[0]">{{ recommendation[1] }}</a>
+                    </h4>
+                    <p class="card-subtitle text-body-secondary">
+                        Similarity: {{ recommendation[2].toFixed(3) }}
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
