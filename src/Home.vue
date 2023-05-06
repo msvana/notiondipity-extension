@@ -8,7 +8,9 @@
             </h1>
             <ul>
                 <li v-for="recommendation in recommendedPagesList">
-                    <a :href="recommendation[0]">{{ recommendation[0] }}</a>
+                    <a :href="recommendation[0]">{{ recommendation[1] }}</a
+                    ><br />
+                    {{ recommendation[2].toFixed(3) }}
                 </li>
             </ul>
         </div>
@@ -18,6 +20,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import type { CurrentPageReponse, Recommendation, RecommendationResponse } from "./Models";
+import { BASE_URL } from "./Config";
 import { useRouter } from "vue-router";
 
 const currentPageName = ref<string>("");
@@ -45,7 +48,7 @@ async function loadRecommendations(pageId: string | null) {
 }
 
 async function getRecommendations(pageId: string): Promise<RecommendationResponse | null> {
-    const url = `http://localhost:5001/recommend/${pageId}`;
+    const url = `${BASE_URL}recommend/${pageId}`;
     const accessTokenResponse = await browser.runtime.sendMessage({ type: "get-access-token" });
     const accessToken = accessTokenResponse["accessToken"];
 

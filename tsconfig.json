@@ -6,7 +6,8 @@
         "moduleResolution": "Node",
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "baseUrl": "."
     },
     "files": ["src/Worker.ts"]
 }

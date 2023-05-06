@@ -8,7 +8,7 @@ export type PageDetails = {
     url: string
 }
 
-export type Recommendation = [string, number]
+export type Recommendation = [string, string, number]
 
 export type RecommendationResponse = {
     currentPage: PageDetails,

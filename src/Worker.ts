@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:5001";
+const BACKEND_URL = "https://notiondipity-backend.fly.dev/";
 const REDIRECT_URL = browser.identity.getRedirectURL();
 const OAUTH_CLIENT_ID = "3eeccaf2-dd44-4eee-bfe0-983e8e09cc32";
 const OAUTH_BASE_URL = "https://api.notion.com/v1/oauth/authorize";
