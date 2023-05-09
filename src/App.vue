@@ -1,10 +1,17 @@
 <template>
+    <div class="float-end fs-3">
+        <a href="" @click="logout"><i class="bi-box-arrow-right"></i></a>
+    </div>
+
     <RouterView />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { BASE_URL } from "./Config";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 onMounted(async function () {
     requestEmbeddingRefresh();
@@ -17,6 +24,12 @@ async function requestEmbeddingRefresh() {
         method: "GET",
         mode: "cors",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+    });
+}
+
+async function logout() {
+    browser.runtime.sendMessage({ type: "logout" }).then((_) => {
+        router.push("/login");
     });
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div v-if="loading">Loading similar pages ...</div>
     <div v-else>
-        <div v-if="error">Looks like your current active tab is not a Notion page!</div>
+        <div v-if="error">{{ errorText }}</div>
         <div v-else>
             <h1>
                 <small>Pages similar to</small><br /><span>{{ currentPageName }}</span>
@@ -31,6 +31,7 @@ const currentPageName = ref<string>("");
 const recommendedPagesList = ref<Recommendation[]>([]);
 const loading = ref<boolean>(true);
 const error = ref<boolean>(false);
+const errorText = ref<string>("");
 const router = useRouter();
 
 onMounted(async function () {
@@ -41,11 +42,14 @@ onMounted(async function () {
 
 async function loadRecommendations(pageId: string | null) {
     if (pageId === null) {
+        errorText.value = "Looks like your current active tab is not a Notion page!";
         error.value = true;
     } else {
         const recommendationResponse = await getRecommendations(pageId);
-        currentPageName.value = recommendationResponse.currentPage.title;
-        recommendedPagesList.value = recommendationResponse.recommendations;
+        if (recommendationResponse != null) {
+            currentPageName.value = recommendationResponse.currentPage.title;
+            recommendedPagesList.value = recommendationResponse.recommendations;
+        }
     }
 
     loading.value = false;
@@ -66,6 +70,11 @@ async function getRecommendations(pageId: string): Promise<RecommendationRespons
 
     if (statusCode == 401) {
         router.push("login");
+    } else if (statusCode == 404) {
+        errorText.value =
+            "Cannot access the current notion page data. Are you logged in under the right account?";
+        error.value = true;
+        return null;
     }
 
     const result = await response.json();

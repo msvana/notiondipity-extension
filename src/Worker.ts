@@ -54,13 +54,19 @@ async function login(): Promise<string | null> {
     return accessTokenResponse.accessToken;
 }
 
+async function logout() {
+    await browser.storage.local.remove('accessToken')
+}
+
 browser.runtime.onMessage.addListener(function (message, _, sendResponse) {
-    if (message.type === "get-page-id") {
+    if (message.type == "get-page-id") {
         getCurrentPageId().then((pageId) => sendResponse({ pageId: pageId }));
-    } else if (message.type === "get-access-token") {
+    } else if (message.type == "get-access-token") {
         getAccessToken().then((accessToken) => sendResponse({ accessToken: accessToken }));
-    } else if (message.type === "login") {
+    } else if (message.type == "login") {
         login().then((accessToken) => sendResponse({ accessToken: accessToken }));
+    } else if (message.type == "logout") {
+        logout().then(() => sendResponse({'status': 'OK'}))
     }
 
     return true;
