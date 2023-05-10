@@ -19,6 +19,11 @@
             </div>
         </div>
     </div>
+
+    <div v-if="!hasData" class="alert alert-warning mt-4">
+        We are processing your Notion pages for the first time. Many similar pages might be missing
+        until the first update is finished. This might take several minutes.
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -31,6 +36,7 @@ const currentPageName = ref<string>("");
 const recommendedPagesList = ref<Recommendation[]>([]);
 const loading = ref<boolean>(true);
 const error = ref<boolean>(false);
+const hasData = ref<boolean>(true);
 const errorText = ref<string>("");
 const router = useRouter();
 
@@ -38,6 +44,8 @@ onMounted(async function () {
     browser.runtime.sendMessage({ type: "get-page-id" }).then((response: CurrentPageReponse) => {
         loadRecommendations(response.pageId);
     });
+
+    await checkDataAvailability();
 });
 
 async function loadRecommendations(pageId: string | null) {
@@ -79,5 +87,20 @@ async function getRecommendations(pageId: string): Promise<RecommendationRespons
 
     const result = await response.json();
     return result;
+}
+
+async function checkDataAvailability() {
+    const url = `${BASE_URL}has-data`;
+    const accessTokenResponse = await browser.runtime.sendMessage({ type: "get-access-token" });
+    const accessToken = accessTokenResponse["accessToken"];
+
+    const response = await fetch(url, {
+        method: "GET",
+        mode: "cors",
+        headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const response_data = await response.json();
+    hasData.value = response_data.hasData;
 }
 </script>
