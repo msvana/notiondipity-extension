@@ -1,13 +1,8 @@
-const BACKEND_URL = "https://notiondipity-backend.fly.dev/";
-const REDIRECT_URL = browser.identity.getRedirectURL();
-const OAUTH_CLIENT_ID = "3eeccaf2-dd44-4eee-bfe0-983e8e09cc32";
-const OAUTH_BASE_URL = "https://api.notion.com/v1/oauth/authorize";
-const OAUTH_URL = `${OAUTH_BASE_URL}?owner=user&client_id=${OAUTH_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
-    REDIRECT_URL
-)}`;
+import * as config from "./Config";
+
 
 async function getCurrentPageId(): Promise<string | null> {
-    const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
+    const currentTab = await chrome.tabs.query({ active: true, currentWindow: true });
     const currentUrl = currentTab[0].url;
 
     if (!currentUrl.startsWith("https://www.notion.so/")) return null;
@@ -20,7 +15,7 @@ async function getCurrentPageId(): Promise<string | null> {
 }
 
 async function getAccessToken(): Promise<string | null> {
-    const accessTokenStorage: Object = await browser.storage.local.get("accessToken");
+    const accessTokenStorage: Object = await chrome.storage.local.get("accessToken");
     if ("accessToken" in accessTokenStorage) {
         return accessTokenStorage.accessToken as string;
     }
@@ -32,7 +27,7 @@ async function login(): Promise<string | null> {
     let url: string = "";
 
     try {
-        url = await browser.identity.launchWebAuthFlow({ url: OAUTH_URL, interactive: true });
+        url = await chrome.identity.launchWebAuthFlow({ url: config.OAUTH_URL, interactive: true });
     } catch (e) {
         console.log(e);
         return null;
@@ -40,8 +35,8 @@ async function login(): Promise<string | null> {
 
     const urlParsed = new URL(url);
     const code = urlParsed.searchParams.get("code") || "";
-    const tokenUrl = `${BACKEND_URL}/token`;
-    const data = { code: code, redirectUri: REDIRECT_URL };
+    const tokenUrl = `${config.BASE_URL}/token/`;
+    const data = { code: code, redirectUri: config.REDIRECT_URL };
     const response = await fetch(tokenUrl, {
         method: "POST",
         mode: "cors",
@@ -50,15 +45,15 @@ async function login(): Promise<string | null> {
     });
     const accessTokenResponse = await response.json();
 
-    browser.storage.local.set({ accessToken: accessTokenResponse.accessToken });
+    chrome.storage.local.set({ accessToken: accessTokenResponse.accessToken });
     return accessTokenResponse.accessToken;
 }
 
 async function logout() {
-    await browser.storage.local.remove('accessToken')
+    await chrome.storage.local.remove("accessToken");
 }
 
-browser.runtime.onMessage.addListener(function (message, _, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, _, sendResponse) {
     if (message.type == "get-page-id") {
         getCurrentPageId().then((pageId) => sendResponse({ pageId: pageId }));
     } else if (message.type == "get-access-token") {
@@ -66,7 +61,7 @@ browser.runtime.onMessage.addListener(function (message, _, sendResponse) {
     } else if (message.type == "login") {
         login().then((accessToken) => sendResponse({ accessToken: accessToken }));
     } else if (message.type == "logout") {
-        logout().then(() => sendResponse({'status': 'OK'}))
+        logout().then(() => sendResponse({ status: "OK" }));
     }
 
     return true;

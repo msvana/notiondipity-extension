@@ -11,7 +11,7 @@ import {useRouter} from 'vue-router';
 const router = useRouter()
 
 async function login() {
-    const response = await browser.runtime.sendMessage({type: 'login'})
+    const response = await chrome.runtime.sendMessage({type: 'login'})
 	if (response.accessToken) {
 		router.push('home')
 	}

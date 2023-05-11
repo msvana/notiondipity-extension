@@ -18,9 +18,9 @@ onMounted(async function () {
 });
 
 async function requestEmbeddingRefresh() {
-    const accessTokenResponse = await browser.runtime.sendMessage({ type: "get-access-token" });
+    const accessTokenResponse = await chrome.runtime.sendMessage({ type: "get-access-token" });
     const accessToken = accessTokenResponse.accessToken;
-    fetch(`${BASE_URL}refresh-embeddings`, {
+    fetch(`${BASE_URL}/refresh-embeddings`, {
         method: "GET",
         mode: "cors",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
@@ -28,7 +28,7 @@ async function requestEmbeddingRefresh() {
 }
 
 async function logout() {
-    browser.runtime.sendMessage({ type: "logout" }).then((_) => {
+    chrome.runtime.sendMessage({ type: "logout" }).then((_) => {
         router.push("/login");
     });
 }

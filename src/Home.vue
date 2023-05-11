@@ -41,7 +41,7 @@ const errorText = ref<string>("");
 const router = useRouter();
 
 onMounted(async function () {
-    browser.runtime.sendMessage({ type: "get-page-id" }).then((response: CurrentPageReponse) => {
+    chrome.runtime.sendMessage({ type: "get-page-id" }).then((response: CurrentPageReponse) => {
         loadRecommendations(response.pageId);
     });
 
@@ -64,8 +64,8 @@ async function loadRecommendations(pageId: string | null) {
 }
 
 async function getRecommendations(pageId: string): Promise<RecommendationResponse | null> {
-    const url = `${BASE_URL}recommend/${pageId}`;
-    const accessTokenResponse = await browser.runtime.sendMessage({ type: "get-access-token" });
+    const url = `${BASE_URL}/recommend/${pageId}`;
+    const accessTokenResponse = await chrome.runtime.sendMessage({ type: "get-access-token" });
     const accessToken = accessTokenResponse["accessToken"];
 
     const response = await fetch(url, {
@@ -90,8 +90,8 @@ async function getRecommendations(pageId: string): Promise<RecommendationRespons
 }
 
 async function checkDataAvailability() {
-    const url = `${BASE_URL}has-data`;
-    const accessTokenResponse = await browser.runtime.sendMessage({ type: "get-access-token" });
+    const url = `${BASE_URL}/has-data`;
+    const accessTokenResponse = await chrome.runtime.sendMessage({ type: "get-access-token" });
     const accessToken = accessTokenResponse["accessToken"];
 
     const response = await fetch(url, {
