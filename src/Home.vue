@@ -29,8 +29,9 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import type { CurrentPageReponse, Recommendation, RecommendationResponse } from "./Models";
-import { BASE_URL } from "./Config";
+import { BASE_URL } from "./config.ts";
 import { useRouter } from "vue-router";
+import { isLoggedIn } from "./services/auth";
 
 const currentPageName = ref<string>("");
 const recommendedPagesList = ref<Recommendation[]>([]);
@@ -41,6 +42,8 @@ const errorText = ref<string>("");
 const router = useRouter();
 
 onMounted(async function () {
+    if (!await isLoggedIn()) router.push("login");
+
     chrome.runtime.sendMessage({ type: "get-page-id" }).then((response: CurrentPageReponse) => {
         loadRecommendations(response.pageId);
     });

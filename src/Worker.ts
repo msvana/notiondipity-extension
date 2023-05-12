@@ -1,4 +1,4 @@
-import * as config from "./Config";
+import * as config from "./config.ts";
 
 
 async function getCurrentPageId(): Promise<string | null> {
