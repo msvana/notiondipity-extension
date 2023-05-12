@@ -9,8 +9,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {isLoggedIn} from './services/auth.ts'
-import {requestEmbeddingRefesh} from './services/backend.ts'
+import {isLoggedIn} from '../services/auth.ts'
+import {requestEmbeddingRefesh} from '../services/backend.ts'
 
 const router = useRouter()
 const loggedIn = ref<boolean>(false)

@@ -2,6 +2,10 @@ export type CurrentPageReponse = {
     pageId: string | undefined
 }
 
+export type AccessTokenResponse = {
+    accessToken: string | null
+}
+
 export type PageDetails = {
     id: string,
     title: string,

@@ -1,6 +1,6 @@
-import App from "./App.vue";
+import App from "./components/app.vue";
 import Home from "./Home.vue";
-import Login from "./Login.vue";
+import Login from "./components/login.vue";
 import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 
