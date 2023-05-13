@@ -11,7 +11,7 @@ embeddings from OpenAI. Cosine distance between page embeddings is used as a sim
 ## Backend
 
 The extension has a backend hosted at https://notiondipity-backend.fly.dev/. It facilitates communication between
-the extension and [Notion API](https://developers.notion.com/). Notion API does not support cross-site requests, so it
+the extension and the [Notion API](https://developers.notion.com/). Notion API does not support cross-site requests, so it
 can't be used directly from a browser. The backend is responsible for calculating all page embeddings and finding
 most similar pages. It uses a PostgreSQL database to store the following information:
 
@@ -19,7 +19,7 @@ most similar pages. It uses a PostgreSQL database to store the following informa
 - embedding of each Notion page
 - the title of each Notion page
 
-We use https://fly.io/ to host the backend. There are no other third parties with have access to this data.
+We use https://fly.io/ to host the backend. There are no other third parties with access to this data.
 
 ## Authentication
 
