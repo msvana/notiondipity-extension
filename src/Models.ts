@@ -6,6 +6,10 @@ export type AccessTokenResponse = {
     accessToken: string | null
 }
 
+export type PageIdResponse = {
+    pageId: string | null
+}
+
 export type PageDetails = {
     id: string,
     title: string,

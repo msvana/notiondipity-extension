@@ -11,3 +11,9 @@ async function makeRequest(url: string, method: string = 'GET', accessToken: str
 export async function requestEmbeddingRefesh(accessToken: string | null = null): Promise<Response> {
     return makeRequest('/refresh-embeddings', 'GET', accessToken)
 }
+
+export async function checkDataAvailability(): Promise<boolean> {
+    const response = await makeRequest('/has-data')
+    const responseData = await response.json()
+    return responseData.hasData
+}
