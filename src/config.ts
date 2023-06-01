@@ -7,3 +7,11 @@ export const OAUTH_URL =
     `&client_id=${OAUTH_CLIENT_ID}` +
     `&response_type=code` +
     `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}`
+
+export enum MessageType {
+    GET_AUTH_TOKEN,
+    GET_PAGE_CONTENTS,
+    GET_CURRENT_PAGE,
+    LOGIN,
+    LOGOUT,
+}

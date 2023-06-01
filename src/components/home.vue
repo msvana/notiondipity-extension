@@ -29,10 +29,10 @@
 <script lang="ts" setup>
 import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {BASE_URL} from '../config.ts'
-import type {PageIdResponse, Recommendation, RecommendationResponse} from '../Models.ts'
-import {isLoggedIn} from '../services/auth.ts'
-import {checkDataAvailability} from '../services/backend.ts'
+import {BASE_URL, MessageType} from '../config'
+import {isLoggedIn} from '../services/auth'
+import {checkDataAvailability, Recommendation, RecommendationResponse} from '../services/backend'
+import {CurrentPage} from '../worker'
 
 const currentPageName = ref<string>('')
 const recommendedPagesList = ref<Recommendation[]>([])
@@ -45,16 +45,16 @@ const router = useRouter()
 onMounted(async function () {
     if (!await isLoggedIn()) router.push('login')
     hasData.value = await checkDataAvailability()
-    const pageIdResponse: PageIdResponse = await chrome.runtime.sendMessage({type: 'get-page-id'})
-    displayRecommendations(pageIdResponse.pageId)
+    const currentPageReponse: CurrentPage | null = await chrome.runtime.sendMessage({type: MessageType.GET_CURRENT_PAGE})
+    displayRecommendations(currentPageReponse)
 })
 
-async function displayRecommendations(pageId: string | null) {
-    if (pageId == null) {
+async function displayRecommendations(currentPage: CurrentPage | null) {
+    if (currentPage == null) {
         error.value = true
         errorText.value = 'Looks like your current active tab is not a Notion page!'
     } else {
-        const recommendationResponse = await getRecommendations(pageId)
+        const recommendationResponse = await getRecommendations(currentPage)
 
         if (recommendationResponse != null) {
             currentPageName.value = recommendationResponse.currentPage.title
@@ -65,15 +65,19 @@ async function displayRecommendations(pageId: string | null) {
     loading.value = false
 }
 
-async function getRecommendations(pageId: string): Promise<RecommendationResponse | null> {
-    const url = `${BASE_URL}/recommend/${pageId}`
-    const accessTokenResponse = await chrome.runtime.sendMessage({type: 'get-access-token'})
+async function getRecommendations(currentPage: CurrentPage): Promise<RecommendationResponse | null> {
+    const url = `${BASE_URL}/v1/recommend/${currentPage.pageId}`
+    const accessTokenResponse = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
     const accessToken = accessTokenResponse['accessToken']
 
     const response = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         mode: 'cors',
-        headers: {Authorization: `Bearer ${accessToken}`}
+        headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'title': currentPage.title,
+            'content': currentPage.content
+        })
     })
 
     const statusCode = response.status

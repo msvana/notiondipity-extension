@@ -10,16 +10,16 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
-import type {AccessTokenResponse} from '../Models.ts'
+import {MessageType} from '../config'
 
 const router = useRouter()
 const buttonDisabled = ref<boolean>()
 
 async function login() {
     buttonDisabled.value = true
-    const response: AccessTokenResponse = await chrome.runtime.sendMessage({type: 'login'})
+    const authToken = await chrome.runtime.sendMessage({type: MessageType.LOGIN})
 
-    if (response.accessToken) {
+    if (typeof authToken == 'string') {
         router.push('home')
     }
 }

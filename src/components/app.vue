@@ -9,8 +9,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {isLoggedIn} from '../services/auth.ts'
-import {requestEmbeddingRefesh} from '../services/backend.ts'
+import {isLoggedIn} from '../services/auth'
+import {requestEmbeddingRefesh} from '../services/backend'
 
 const router = useRouter()
 const loggedIn = ref<boolean>(false)
@@ -21,7 +21,7 @@ onMounted(async function () {
 })
 
 async function logout() {
-    await chrome.runtime.sendMessage({type: 'logout'})
+    await chrome.runtime.sendMessage({type: MessageType.LOGOUT})
     loggedIn.value = false
     router.push('/login')
 }
