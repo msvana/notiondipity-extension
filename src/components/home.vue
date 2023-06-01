@@ -67,13 +67,12 @@ async function displayRecommendations(currentPage: CurrentPage | null) {
 
 async function getRecommendations(currentPage: CurrentPage): Promise<RecommendationResponse | null> {
     const url = `${BASE_URL}/v1/recommend/${currentPage.pageId}`
-    const accessTokenResponse = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
-    const accessToken = accessTokenResponse['accessToken']
+    const authToken = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
 
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
-        headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
+        headers: {Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json'},
         body: JSON.stringify({
             'title': currentPage.title,
             'content': currentPage.content
