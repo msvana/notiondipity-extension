@@ -26,7 +26,7 @@
       "128": "icon_128.png"
     }
   },
-  "{{firefox}}.content_scripts": [
+  "content_scripts": [
     {
       "matches": ["https://www.notion.so/*"],
       "js": ["src/cs.ts"]
