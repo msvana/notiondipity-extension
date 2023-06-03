@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
+import {MessageType} from '../config'
 import {isLoggedIn} from '../services/auth'
 import {requestEmbeddingRefesh} from '../services/backend'
 
