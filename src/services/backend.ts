@@ -13,14 +13,14 @@ export type RecommendationResponse = {
     recommendations: Recommendation[]
 }
 
-async function makeRequest(url: string, method: string = 'GET', authToken: string | undefined = undefined): Promise<Response> {
+async function makeRequest(url: string, method = 'GET', authToken?: string): Promise<Response> {
     if (!authToken) authToken = await getAuthTokenFromWorker()
     const fullUrl = `${BASE_URL}${url}`
     const headers = {'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`}
     return fetch(fullUrl, {method: method, mode: 'cors', headers: headers})
 }
 
-export async function requestEmbeddingRefesh(authToken: string | undefined = undefined): Promise<Response> {
+export async function requestEmbeddingRefesh(authToken?: string): Promise<Response> {
     return makeRequest('/refresh-embeddings', 'GET', authToken)
 }
 

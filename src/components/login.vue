@@ -1,5 +1,5 @@
 <template>
-    <div class="login-btn text-center m-5">
+    <div class="login-btn text-center mb-5">
         <p>You are not logged in or your access token has expired. Please login with your Notion account</p>
         <button class="btn btn-primary" @click="login" :disabled="buttonDisabled">
             {{ buttonDisabled ? 'Please Wait' : 'Login with Notion' }}
