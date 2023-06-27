@@ -14,6 +14,9 @@
 
     <div class="m-2" style="padding-top: 2.5em">
         <router-view/>
+        <p v-if="checkingLogin" class="text-center">
+            Checking user authentication status ...
+        </p>
     </div>
 </template>
 
@@ -26,9 +29,12 @@ import {requestEmbeddingRefesh} from '../services/backend'
 
 const router = useRouter()
 const loggedIn = ref<boolean>(false)
+const checkingLogin = ref<boolean>(false)
 
 onMounted(async function () {
+    checkingLogin.value = true
     loggedIn.value = await isLoggedIn()
+    checkingLogin.value = false
     requestEmbeddingRefesh()
 })
 
