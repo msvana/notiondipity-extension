@@ -31,8 +31,9 @@ import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {BASE_URL, MessageType} from '../config'
 import {isLoggedIn} from '../services/auth'
-import {checkDataAvailability, Recommendation, RecommendationResponse} from '../services/backend'
-import {CurrentPage} from '../worker'
+import type {Recommendation, RecommendationResponse} from '../services/backend'
+import {checkDataAvailability} from '../services/backend'
+import type {CurrentPage} from '../worker'
 
 const currentPageName = ref<string>('')
 const recommendedPagesList = ref<Recommendation[]>([])
@@ -57,7 +58,7 @@ async function displayRecommendations(currentPage: CurrentPage | null) {
         const recommendationResponse = await getRecommendations(currentPage)
 
         if (recommendationResponse != null) {
-            currentPageName.value = recommendationResponse.currentPage.title
+            currentPageName.value = currentPage.title
             recommendedPagesList.value = recommendationResponse.recommendations
         }
     }
@@ -66,7 +67,7 @@ async function displayRecommendations(currentPage: CurrentPage | null) {
 }
 
 async function getRecommendations(currentPage: CurrentPage): Promise<RecommendationResponse | null> {
-    const url = `${BASE_URL}/v1/recommend/${currentPage.pageId}`
+    const url = `${BASE_URL}/v2/recommend/`
     const authToken = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
 
     const response = await fetch(url, {
@@ -74,6 +75,7 @@ async function getRecommendations(currentPage: CurrentPage): Promise<Recommendat
         mode: 'cors',
         headers: {Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json'},
         body: JSON.stringify({
+            'pageId': currentPage.pageId,
             'title': currentPage.title,
             'content': currentPage.content
         })
