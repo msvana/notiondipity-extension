@@ -6,6 +6,9 @@
         <li class="nav-item">
             <router-link to="/search" class="nav-link">Search</router-link>
         </li>
+        <li class="nav-item">
+            <router-link to="/ideas" class="nav-link">Ideas</router-link>
+        </li>
 
         <li class="nav-item fs-3 pt-1">
             <a href="#" @click="logout"><i class="bi-box-arrow-right"></i></a>
