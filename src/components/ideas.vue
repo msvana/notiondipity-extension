@@ -93,7 +93,14 @@ async function getIdeas(currentPage: CurrentPage): Promise<IdeasResponse | null>
         return null
     }
 
-    const result = await response.json()
+    const result: IdeasResponse = await response.json()
+
+    if(result.ideas.length == 0) {
+        errorText.value = "ChatGPT couldn't generate any interesting project ideas from this content."
+        error.value = true
+        return null
+    }
+
     return result
 }
 
