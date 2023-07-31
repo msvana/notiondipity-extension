@@ -1,12 +1,21 @@
 # Notiondipity
 
-Notiondipity is a browser extension for recommending [Notion](https://notion.so) pages
-similar to the currently open Notion page. The idea behind the extension is that it
-should help you discover hidden connections between different pieces of knowledge.
+Notiondipity is a browser extension for exploiting connections between [Notion](https://notion.so) pages. 
+It provides the following features:
+
+- Recommending pages similar to the currently open Notion page
+- Semantic search based on the semantic similarity between the query and Notion pages
+- Generating project ideas from the current page and up to 2 most similar pages
+
+You can download the extension from 
+[Chrome Web Store](https://chrome.google.com/webstore/detail/notiondipity/fbbjmpeddaliljeidpmgchbgdfpjglok) 
+or [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/notiondipity/).
 
 To find similar pages, Notiondipity uses 
 [text-embedding-ada-002](https://platform.openai.com/docs/guides/embeddings)
-embeddings from OpenAI. Cosine distance between page embeddings is used as a similarity metric.
+embeddings from OpenAI. Cosine distance between page embeddings is used as a similarity metric. 
+The [gpt-3.5-turbo](https://platform.openai.com/docs/models/gpt-3-5) model is used to generate
+project ideas.
 
 ## Backend
 
@@ -15,9 +24,10 @@ the extension and the [Notion API](https://developers.notion.com/). Notion API d
 can't be used directly from a browser. The backend is responsible for calculating all page embeddings and finding
 most similar pages. It uses a PostgreSQL database to store the following information:
 
-- unique Notion user ID
+- SHA256 hash of the unique Notion user ID
 - embedding of each Notion page
 - the title of each Notion page
+- encrypted contents of each Notion page
 
 We use https://fly.io/ to host the backend. There are no other third parties with access to this data.
 
