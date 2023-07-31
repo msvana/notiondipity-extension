@@ -1,5 +1,8 @@
 import {BASE_URL, MessageType, OAUTH_URL, REDIRECT_URL} from '../config'
 import {requestEmbeddingRefesh} from './backend'
+import {ref} from 'vue'
+
+export const waitingForToken = ref<boolean>(false)
 
 export async function getAuthTokenFromStorage(): Promise<string | undefined> {
     const authTokenStorage = await chrome.storage.local.get('authToken')
@@ -27,10 +30,11 @@ export async function login(): Promise<string | undefined> {
         if (!url) return undefined
         const urlParsed = new URL(url)
         const code = urlParsed.searchParams.get('code') || ''
+        waitingForToken.value = true
         const response = await generateAuthToken(code)
         const responseData = await response.json()
-
         await chrome.storage.local.set({authToken: responseData.token})
+        waitingForToken.value = false
         requestEmbeddingRefesh(responseData.token)
         return responseData.token
     } catch (e) {

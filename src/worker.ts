@@ -1,5 +1,6 @@
 import {MessageType} from './config'
-import {getAuthTokenFromStorage, login, logout} from './services/auth'
+import {getAuthTokenFromStorage, login, logout, waitingForToken} from './services/auth'
+import {watch} from 'vue'
 
 export type Message = {
     type: MessageType
@@ -36,7 +37,10 @@ chrome.runtime.onMessage.addListener(function (message: Message, _, sendResponse
             getCurrentPage().then(sendResponse)
             break
         case MessageType.GET_AUTH_TOKEN:
-            getAuthTokenFromStorage().then(sendResponse)
+            if (waitingForToken.value == false)
+                getAuthTokenFromStorage().then(sendResponse)
+            else
+                watch(waitingForToken, () => getAuthTokenFromStorage().then(sendResponse))
             break
         case MessageType.LOGIN:
             login().then(sendResponse)
