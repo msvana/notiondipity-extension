@@ -18,6 +18,13 @@ export type IdeasResponse = {
     ideas: {title: string, desc: string}[]
 }
 
+export type ComparisonResponse = {
+    status: string,
+    similarities?: string[],
+    differences?: string[],
+    combinations?: string[],
+}
+
 async function makeRequest(url: string, method = 'GET', authToken?: string): Promise<Response> {
     if (!authToken) authToken = await getAuthTokenFromWorker()
     const fullUrl = `${BASE_URL}${url}`

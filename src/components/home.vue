@@ -13,9 +13,16 @@
                 <h4 class="card-title">
                     <a :href="recommendation[0]">{{ recommendation[1] }}</a>
                 </h4>
-                <p class="card-subtitle text-body-secondary">
-                    Similarity: {{ recommendation[2].toFixed(3) }}
-                </p>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="card-subtitle text-body-secondary">
+                            Similarity: {{ recommendation[2].toFixed(3) }}
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <router-link :to="'/comparison/' + recommendation[0].split('-').at(-1)">Compare</router-link>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
