@@ -5,25 +5,32 @@
     <div v-else>
         <div v-if="error">{{ errorText }}</div>
         <div v-else>
-            <h1>Similarities</h1>
-            <ul>
-                <li v-for="similarity in similarities">{{similarity}}</li>
-            </ul>
-            <h1>Differences</h1>
-            <ul>
-                <li v-for="difference in differences">{{difference}}</li>
-            </ul>
-            <h1>Combinations</h1>
-            <ul>
-                <li v-for="combination in combinations">{{combination}}</li>
-            </ul>
+            <h1><small>Comparison with</small> {{pageTitle}}</h1>
+            <div class="card mb-2 p-2">
+                <h4 class="card-title text-success">Similarities</h4>
+                <ul>
+                    <li v-for="similarity in similarities">{{ similarity }}</li>
+                </ul>
+            </div>
+            <div class="card mb-2 p-2">
+                <h4 class="card-title text-danger">Differences</h4>
+                <ul>
+                    <li v-for="difference in differences">{{ difference }}</li>
+                </ul>
+            </div>
+            <div class="card mb-2 p-2">
+                <h4 class="card-title text-warning">Combinations</h4>
+                <ul>
+                    <li v-for="combination in combinations">{{ combination }}</li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import {onMounted, ref} from 'vue'
-import {useRouter, useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {BASE_URL, MessageType} from '../config'
 import {isLoggedIn} from '../services/auth'
 import type {CurrentPage} from '../worker'
@@ -34,6 +41,7 @@ const error = ref<boolean>(false)
 const errorText = ref<string>('')
 const router = useRouter()
 const route = useRoute()
+const pageTitle = ref<string>('')
 const similarities = ref<string[]>([])
 const differences = ref<string[]>([])
 const combinations = ref<string[]>([])
@@ -50,19 +58,20 @@ async function displayComparison(currentPage: CurrentPage | null, secondPageId: 
         error.value = true
         errorText.value = 'Looks like your current active tab is not a Notion page!'
     } else {
-        const comparisonResponse = await getRecommendations(currentPage, secondPageId)
+        const comparisonResponse = await getComparison(currentPage, secondPageId)
 
         if (comparisonResponse != null) {
-            similarities.value = comparisonResponse.similarities || []
-            differences.value = comparisonResponse.differences || []
-            combinations.value = comparisonResponse.combinations || []
+            similarities.value = comparisonResponse.comparison?.similarities || []
+            differences.value = comparisonResponse.comparison?.differences || []
+            combinations.value = comparisonResponse.comparison?.combinations || []
+            pageTitle.value = comparisonResponse.comparison?.secondPageTitle || 'Unknown page'
         }
     }
 
     loading.value = false
 }
 
-async function getRecommendations(currentPage: CurrentPage, secondPageId: string): Promise<ComparisonResponse | null> {
+async function getComparison(currentPage: CurrentPage, secondPageId: string): Promise<ComparisonResponse | null> {
     const url = `${BASE_URL}/compare/`
     const authToken = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
 
@@ -71,6 +80,7 @@ async function getRecommendations(currentPage: CurrentPage, secondPageId: string
         mode: 'cors',
         headers: {Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json'},
         body: JSON.stringify({
+            'pageId': currentPage.pageId,
             'secondPageId': secondPageId,
             'title': currentPage.title,
             'content': currentPage.content

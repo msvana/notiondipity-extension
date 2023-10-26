@@ -14,13 +14,16 @@
                     <a :href="recommendation[0]">{{ recommendation[1] }}</a>
                 </h4>
                 <div class="row">
-                    <div class="col-sm-6">
-                        <p class="card-subtitle text-body-secondary">
+                    <div class="col-6">
+                        <p class="card-subtitle text-body-secondary mb-0 mt-1">
                             Similarity: {{ recommendation[2].toFixed(3) }}
                         </p>
                     </div>
-                    <div class="col-sm-6">
-                        <router-link :to="'/comparison/' + recommendation[0].split('-').at(-1)">Compare</router-link>
+                    <div class="col-6 text-end btn-comparison-wrapper">
+                        <router-link :to="'/comparison/' + recommendation[0].split('-').at(-1)"
+                                     class="btn btn-sm btn-outline-primary btn-comparison">
+                            Compare
+                        </router-link>
                     </div>
                 </div>
             </div>
@@ -43,6 +46,7 @@ import {checkDataAvailability} from '../services/backend'
 import type {CurrentPage} from '../worker'
 
 const currentPageName = ref<string>('')
+const currentPageId = ref<string>('')
 const recommendedPagesList = ref<Recommendation[]>([])
 const loading = ref<boolean>(true)
 const error = ref<boolean>(false)
@@ -66,6 +70,7 @@ async function displayRecommendations(currentPage: CurrentPage | null) {
 
         if (recommendationResponse != null) {
             currentPageName.value = currentPage.title
+            currentPageId.value = currentPage.pageId
             recommendedPagesList.value = recommendationResponse.recommendations
         }
     }
@@ -108,5 +113,14 @@ async function getRecommendations(currentPage: CurrentPage): Promise<Recommendat
 <style>
 h1 {
     font-size: 1.25rem;
+}
+
+.btn-comparison {
+    position: relative;
+    top: -0.1rem;
+}
+
+.btn-comparison-wrapper {
+    margin-bottom: -0.1rem;
 }
 </style>

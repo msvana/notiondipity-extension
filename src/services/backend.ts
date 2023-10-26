@@ -20,9 +20,13 @@ export type IdeasResponse = {
 
 export type ComparisonResponse = {
     status: string,
-    similarities?: string[],
-    differences?: string[],
-    combinations?: string[],
+    comparison?: {
+        cached: boolean
+        secondPageTitle: string,
+        similarities: string[],
+        differences: string[],
+        combinations: string[],
+    }
 }
 
 async function makeRequest(url: string, method = 'GET', authToken?: string): Promise<Response> {
