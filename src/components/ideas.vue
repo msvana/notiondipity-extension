@@ -1,31 +1,23 @@
 <template>
     <div v-if="loading" class="text-center">
         <img src="../../public/loading.gif" alt="" class="p-3">
+        <p class="text-center">Talking to ChatGPT. This usually takes about 15 seconds.</p>
     </div>
+
     <div v-else>
         <div v-if="error">{{ errorText }}</div>
         <div v-else>
             <h1>
-                <small>Pages similar to</small><br/><span>{{ currentPageName }}</span>
+                <small>Ideas generated from </small><br/><span>{{ currentPageName }}</span> and similar pages.
             </h1>
 
-            <div class="card mb-2 p-2" v-for="recommendation in recommendedPagesList">
+            <div class="card mb-2 p-2" v-for="idea in ideas">
                 <h4 class="card-title">
-                    <a :href="recommendation[0]">{{ recommendation[1] }}</a>
+                    {{ idea.title }}
                 </h4>
-                <div class="row">
-                    <div class="col-6">
-                        <p class="card-subtitle text-body-secondary mb-0 mt-1">
-                            Similarity: {{ recommendation[2].toFixed(3) }}
-                        </p>
-                    </div>
-                    <div class="col-6 text-end btn-comparison-wrapper">
-                        <router-link :to="'/comparison/' + recommendation[0].split('-').at(-1)"
-                                     class="btn btn-sm btn-outline-primary btn-comparison">
-                            Compare
-                        </router-link>
-                    </div>
-                </div>
+                <p class="card-subtitle text-body-secondary">
+                    {{ idea.desc }}
+                </p>
             </div>
         </div>
     </div>
@@ -36,50 +28,47 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {useRouter} from 'vue-router'
-import {BASE_URL, MessageType} from '../config'
 import {isLoggedIn} from '../services/auth'
-import type {Recommendation, RecommendationResponse} from '../services/backend'
+import type {IdeasResponse} from '../services/backend'
 import {checkDataAvailability} from '../services/backend'
+import {useRouter} from 'vue-router'
 import type {CurrentPage} from '../worker'
+import {BASE_URL, MessageType} from '../config'
 
-const currentPageName = ref<string>('')
-const currentPageId = ref<string>('')
-const recommendedPagesList = ref<Recommendation[]>([])
-const loading = ref<boolean>(true)
-const error = ref<boolean>(false)
 const hasData = ref<boolean>(true)
-const errorText = ref<string>('')
+const currentPageName = ref<string>('')
+const loading = ref<boolean>(true)
 const router = useRouter()
+const error = ref<boolean>(false)
+const errorText = ref<string>('')
+const ideas = ref<{title: string, desc: string}[]>([])
 
 onMounted(async function () {
     if (!await isLoggedIn()) router.push('login')
     hasData.value = await checkDataAvailability()
     const currentPageReponse: CurrentPage | null = await chrome.runtime.sendMessage({type: MessageType.GET_CURRENT_PAGE})
-    displayRecommendations(currentPageReponse)
+    displayIdeas(currentPageReponse)
 })
 
-async function displayRecommendations(currentPage: CurrentPage | null) {
+async function displayIdeas(currentPage: CurrentPage | null) {
     if (currentPage == null) {
         error.value = true
         errorText.value = 'Looks like your current active tab is not a Notion page!'
     } else {
-        const recommendationResponse = await getRecommendations(currentPage)
-
-        if (recommendationResponse != null) {
+        const ideasResponse = await getIdeas(currentPage)
+        if (ideasResponse != null) {
             currentPageName.value = currentPage.title
-            currentPageId.value = currentPage.pageId
-            recommendedPagesList.value = recommendationResponse.recommendations
+            ideas.value = ideasResponse.ideas
         }
     }
 
     loading.value = false
 }
 
-async function getRecommendations(currentPage: CurrentPage): Promise<RecommendationResponse | null> {
-    const url = `${BASE_URL}/v2/recommend/`
+async function getIdeas(currentPage: CurrentPage): Promise<IdeasResponse | null> {
+    const url = `${BASE_URL}/ideas/`
     const authToken = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
 
     const response = await fetch(url, {
@@ -104,23 +93,15 @@ async function getRecommendations(currentPage: CurrentPage): Promise<Recommendat
         return null
     }
 
-    const result = await response.json()
+    const result: IdeasResponse = await response.json()
+
+    if(result.ideas.length == 0) {
+        errorText.value = "ChatGPT couldn't generate any interesting project ideas from this content."
+        error.value = true
+        return null
+    }
+
     return result
 }
 
 </script>
-
-<style>
-h1 {
-    font-size: 1.25rem;
-}
-
-.btn-comparison {
-    position: relative;
-    top: -0.1rem;
-}
-
-.btn-comparison-wrapper {
-    margin-bottom: -0.1rem;
-}
-</style>
