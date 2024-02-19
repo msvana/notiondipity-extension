@@ -9,6 +9,7 @@
         <div v-else>
             <h1>
                 <small>Ideas generated from </small><br/><span>{{ currentPageName }}</span> and similar pages.
+                <button type="button" class="btn btn-outline-primary btn-sm" @click="refresh">Refresh</button>
             </h1>
 
             <div class="card mb-2 p-2" v-for="idea in ideas">
@@ -52,12 +53,12 @@ onMounted(async function () {
     displayIdeas(currentPageReponse)
 })
 
-async function displayIdeas(currentPage: CurrentPage | null) {
+async function displayIdeas(currentPage: CurrentPage | null, refresh: boolean = false) {
     if (currentPage == null) {
         error.value = true
         errorText.value = 'Looks like your current active tab is not a Notion page!'
     } else {
-        const ideasResponse = await getIdeas(currentPage)
+        const ideasResponse = await getIdeas(currentPage, refresh)
         if (ideasResponse != null) {
             currentPageName.value = currentPage.title
             ideas.value = ideasResponse.ideas
@@ -67,7 +68,7 @@ async function displayIdeas(currentPage: CurrentPage | null) {
     loading.value = false
 }
 
-async function getIdeas(currentPage: CurrentPage): Promise<IdeasResponse | null> {
+async function getIdeas(currentPage: CurrentPage, refresh: boolean): Promise<IdeasResponse | null> {
     const url = `${BASE_URL}/ideas/`
     const authToken = await chrome.runtime.sendMessage({type: MessageType.GET_AUTH_TOKEN})
 
@@ -78,7 +79,8 @@ async function getIdeas(currentPage: CurrentPage): Promise<IdeasResponse | null>
         body: JSON.stringify({
             'pageId': currentPage.pageId,
             'title': currentPage.title,
-            'content': currentPage.content
+            'content': currentPage.content,
+            'refresh': refresh
         })
     })
 
@@ -102,6 +104,13 @@ async function getIdeas(currentPage: CurrentPage): Promise<IdeasResponse | null>
     }
 
     return result
+}
+
+async function refresh() {
+    loading.value = true
+    error.value = false
+    const currentPageReponse: CurrentPage | null = await chrome.runtime.sendMessage({type: MessageType.GET_CURRENT_PAGE})
+    displayIdeas(currentPageReponse, true)
 }
 
 </script>

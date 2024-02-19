@@ -4,8 +4,8 @@
     "description": "",
     "type": "module",
     "scripts": {
-        "build-prod": "MODE=production vite build",
-        "build-dev": "MODE=development vite build"
+        "build-prod": "vite build --mode production",
+        "build-dev": "vite build --mode development"
     },
     "keywords": [],
     "author": "",
