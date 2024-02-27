@@ -22,6 +22,17 @@
                 <h4 class="card-title">
                     {{ idea.title }}
                 </h4>
+
+                <p>
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary btn-sm"
+                        @click="saveIdea(idea.idea_id)"
+                    >
+                        Save
+                    </button>
+                </p>
+
                 <p class="card-subtitle text-body-secondary">
                     {{ idea.description }}
                 </p>
@@ -39,7 +50,7 @@
 import { onMounted, ref } from "vue";
 import { isLoggedIn } from "../services/auth";
 import type { IdeasResponse } from "../services/backend";
-import { checkDataAvailability } from "../services/backend";
+import { checkDataAvailability, saveIdea as backendSaveIdea } from "../services/backend";
 import { useRouter } from "vue-router";
 import type { CurrentPage } from "../worker";
 import { BASE_URL, MessageType } from "../config";
@@ -50,7 +61,7 @@ const loading = ref<boolean>(true);
 const router = useRouter();
 const error = ref<boolean>(false);
 const errorText = ref<string>("");
-const ideas = ref<{ title: string; description: string }[]>([]);
+const ideas = ref<{ title: string; description: string; idea_id: number }[]>([]);
 
 onMounted(async function () {
     if (!(await isLoggedIn())) router.push("login");
@@ -122,5 +133,10 @@ async function refresh() {
         type: MessageType.GET_CURRENT_PAGE,
     });
     displayIdeas(currentPageReponse, true);
+}
+
+async function saveIdea(ideaId: number) {
+    const authToken = await chrome.runtime.sendMessage({ type: MessageType.GET_AUTH_TOKEN });
+    const result = await backendSaveIdea(ideaId, authToken);
 }
 </script>

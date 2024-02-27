@@ -1,5 +1,5 @@
-import {BASE_URL} from "../config";
-import {getAuthTokenFromWorker} from "./auth";
+import { BASE_URL } from "../config";
+import { getAuthTokenFromWorker } from "./auth";
 
 export type PageDetails = {
     id: string;
@@ -15,7 +15,7 @@ export type RecommendationResponse = {
 
 export type IdeasResponse = {
     status: string;
-    ideas: { title: string; description: string }[];
+    ideas: { title: string; description: string; idea_id: number }[];
 };
 
 export type ComparisonResponse = {
@@ -44,4 +44,10 @@ export async function checkDataAvailability(): Promise<boolean> {
     const response = await makeRequest("/has-data");
     const responseData = await response.json();
     return responseData.hasData;
+}
+
+export async function saveIdea(ideaId: number, authToken?: string): Promise<boolean> {
+    const response = await makeRequest(`/ideas/save/${ideaId}`, "GET", authToken);
+    const responseData = await response.json();
+    return responseData.status === "OK";
 }
