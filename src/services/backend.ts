@@ -13,9 +13,16 @@ export type RecommendationResponse = {
     recommendations: Recommendation[];
 };
 
+export type Idea = {
+    title: string;
+    description: string;
+    idea_id: number;
+    saved: boolean;
+};
+
 export type IdeasResponse = {
     status: string;
-    ideas: { title: string; description: string; idea_id: number }[];
+    ideas: Idea[];
 };
 
 export type ComparisonResponse = {
@@ -50,4 +57,8 @@ export async function saveIdea(ideaId: number, authToken?: string): Promise<bool
     const response = await makeRequest(`/ideas/save/${ideaId}`, "GET", authToken);
     const responseData = await response.json();
     return responseData.status === "OK";
+}
+
+export async function getSavedIdeas(authToken?: string): Promise<Response> {
+    return makeRequest("/ideas/saved", "GET", authToken);
 }
