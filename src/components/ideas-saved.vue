@@ -7,14 +7,12 @@
     <div v-else>
         <div v-if="error">{{ errorText }}</div>
         <div v-else>
-            <div class="card mb-2 p-2" v-for="idea in ideas">
-                <h4 class="card-title">
-                    {{ idea.title }}
-                </h4>
-                <p class="card-subtitle text-body-secondary">
-                    {{ idea.description }}
-                </p>
-            </div>
+            <IdeaComponent
+                :idea="idea"
+                v-for="(idea, key) in ideas"
+                :key="key"
+                @unsave="removeIdea(key)"
+            />
         </div>
     </div>
 
@@ -25,11 +23,13 @@
 </template>
 
 <script setup lang="ts">
+
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { isLoggedIn } from "../services/auth";
 import type { Idea, IdeasResponse } from "../services/backend";
 import { getSavedIdeas, checkDataAvailability } from "../services/backend";
+import IdeaComponent from "./idea.vue";
 
 const hasData = ref<boolean>(true);
 const loading = ref<boolean>(true);
@@ -70,5 +70,9 @@ async function displayIdeas() {
     }
 
     ideas.value = ideasResponse.ideas;
+}
+
+function removeIdea(key: number) {
+    ideas.value.splice(key, 1);
 }
 </script>

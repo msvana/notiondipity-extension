@@ -59,6 +59,12 @@ export async function saveIdea(ideaId: number, authToken?: string): Promise<bool
     return responseData.status === "OK";
 }
 
+export async function unsaveIdea(ideaId: number, authToken?: string): Promise<boolean> {
+    const response = await makeRequest(`/ideas/unsave/${ideaId}`, "GET", authToken);
+    const responseData = await response.json();
+    return responseData.status === "OK";
+}
+
 export async function getSavedIdeas(authToken?: string): Promise<Response> {
     return makeRequest("/ideas/saved", "GET", authToken);
 }
