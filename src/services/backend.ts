@@ -66,5 +66,5 @@ export async function unsaveIdea(ideaId: number, authToken?: string): Promise<bo
 }
 
 export async function getSavedIdeas(authToken?: string): Promise<Response> {
-    return makeRequest("/ideas/saved", "GET", authToken);
+    return makeRequest("/ideas/saved/", "GET", authToken);
 }

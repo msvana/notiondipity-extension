@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "{{chrome}}.key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApx85uwm3V2F5M5dBLzSI9LRaTu93GWtBy8EiJac7P3rk36LToTxlou/v3bp9r3rUggFIAMFo3FMku/h1ewaQgyfA9TL3pKdlW/J3vYRNfcC/hDEDp7l6Swvjb4xU/WYG1X6RdB+lzBNpmJ55FErJyN/z/ka1Hj54hurYLksA6dXYOXoD/CX8wvWlxPgLchgKZOozpsTIT8aQbSLIdsHo5wbb1AKnSg4qR8q3P8O98EmyQsQbVoQ1jbIFpX7FS+5Ily/VgcdcgvhkWDPdTrGXf3txCYENV7gZ7ybHRAyFpOrRR3bG+IyRz5s7N/LtYXK9NN+fY4TDnZtLXOqIfazgcQIDAQAB",
   "name": "Notiondipity",
-  "version": "0.6",
+  "version": "0.7",
   "icons": {
     "48": "icon_48.png",
     "128": "icon_128.png"
